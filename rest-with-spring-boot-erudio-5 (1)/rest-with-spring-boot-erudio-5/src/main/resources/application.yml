@@ -13,3 +13,8 @@ spring:
       hibernate:
         dialect: org.hibernate.dialect.MySQLDialect
     show-sql: false
+logging:
+  level:
+    # root: WARN << Configuração Global (Não recomendado).
+    br.com.erudio: DEBUG #A ideia é especificar qual arquivos vão ser trabalhados. (Economiza muitos recursos)
+
