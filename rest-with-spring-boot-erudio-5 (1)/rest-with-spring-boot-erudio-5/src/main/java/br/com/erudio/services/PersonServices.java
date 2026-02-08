@@ -1,6 +1,10 @@
 package br.com.erudio.services;
 
+import br.com.erudio.data.dto.PersonDTO;
 import br.com.erudio.exception.ResourceNotFoundException;
+import static br.com.erudio.mapper.ObjectMapper.parseListObjects;
+import static br.com.erudio.mapper.ObjectMapper.parseObject;
+
 import br.com.erudio.model.Person;
 import br.com.erudio.repository.PersonRepository;
 import org.slf4j.Logger;
@@ -23,25 +27,28 @@ public class PersonServices {
     @Autowired
     PersonRepository repository;
 
-    public List<Person> findAll(){
+    public List<PersonDTO> findAll(){
         logger.info("Finding everyone!");
 
-        return repository.findAll();
+        return  parseListObjects(repository.findAll(), PersonDTO.class);
 
     }
 
-    public Person findById(Long id){
+    public PersonDTO findById(Long id){
         logger.info("Finding one Person!");
 
-        return repository.findById(id).orElseThrow(() -> new ResourceNotFoundException("No records found for this ID!"));
+        var entity = repository.findById(id).orElseThrow(() -> new ResourceNotFoundException("No records found for this ID!"));
+        return parseObject(entity, PersonDTO.class);
     }
 
-    public Person create(Person person) {
+    public PersonDTO create(PersonDTO person) {
         logger.info("Creating someone");
-        return repository.save(person);
+
+        var entity = parseObject(person, Person.class);
+        return parseObject(repository.save(entity), PersonDTO.class);
     }
 
-    public Person update(Person person) {
+    public PersonDTO update(PersonDTO person) {
         logger.info("Updating someone");
         Person entity = repository.findById(person.getId()).orElseThrow(() -> new ResourceNotFoundException("No records found for this ID"));
 
@@ -50,7 +57,8 @@ public class PersonServices {
         entity.setAddress(person.getAddress());
         entity.setGender(person.getGender());
 
-        return repository.save(person);
+
+        return parseObject(repository.save(entity), PersonDTO.class);
     }
 
     public void delete(Long id) {
@@ -59,22 +67,4 @@ public class PersonServices {
         repository.delete(entity);
     }
 
-
-    private Person mockPerson(int i) {
-
-        Person person = new Person();
-        person.setId(counter.incrementAndGet());
-        person.setFirstName("Person " + i);
-        person.setLastName("LastName" + i);
-        person.setAddress("Natal City");
-
-        if (i % 2 == 0){
-            person.setGender("M");
-        } else {
-            person.setGender("F");
-        }
-
-        return person;
-
-    }
 }
