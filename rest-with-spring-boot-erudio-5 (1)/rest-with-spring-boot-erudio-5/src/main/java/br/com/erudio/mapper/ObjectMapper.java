@@ -18,6 +18,8 @@ public class ObjectMapper {
 
     }
 
+
+
     public static <O, D> List<D> parseListObjects(List<O> origin, Class<D> destination) {
 
         List<D> destinationObjects = new ArrayList<D>();
